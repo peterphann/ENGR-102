@@ -3,8 +3,6 @@ import random as rand
 names = ['Water', 'Oil', 'Honey', 'Gasoline', 'Motor Oil', 'Cellulose', 'Milk']
 properties = ['Boiling Point', 'Melting Point', 'Random Point', 'Critical Point']
 
-
-
 def create_cases(num : int):
   cases = []
   for i in range(num):
