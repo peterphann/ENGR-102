@@ -5,7 +5,7 @@ for row in range(5):
     # Determine correct character based on user input
     # If no character is given, use the digit's character
     # Don't change character if :, A, P, M
-    if digit == " " or digit in ":APM":
+    if character == " " or digit in ":APM":
       character_used = digit
     else:
       character_used = character
