@@ -4,7 +4,7 @@
 #
 # Names: Peter Phan
 # Olivia Goralski
-# Claudia Phan
+# Claudia Phan  
 # Benjamin Sandefur
 # Section: 521
 # Assignment: Lab 8.10

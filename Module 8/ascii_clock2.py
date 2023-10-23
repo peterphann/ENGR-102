@@ -10,7 +10,7 @@ conversion = {
   "8": ["888","8 8","888","8 8","888"],
   "9": ["999","9 9","999","  9","999"],
   ":": [" ",":"," ",":"," "],
-  "A": [" A ","A A","AAA","A A","A A"],
+  "A": ["AAA","A A","AAA","A A","A A"],
   "P": ["PPP","P P","PPP","P  ","P  "],
   "M": ["M   M","MM MM","M M M","M   M","M   M"]
 }
@@ -35,7 +35,7 @@ if clock_type == "12":
 for row in range(5):
   for digit in time:
     digit_row = conversion[digit][row]
-    if digit != " " and digit not in ":APM":
+    if True:#digit != " " and digit not in ":APM":
       digit_row = digit_row.replace(digit, character)
     print(digit_row, end=" ")
   print()
