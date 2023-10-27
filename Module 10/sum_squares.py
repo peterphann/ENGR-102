@@ -45,5 +45,3 @@ t1 = time() # get start time
 print(list_nums(15)) # run function
 t2 = time() # get end time
 print(f"This took {t2-t1} seconds") # print result
-  
-print(count_sets(20000))
