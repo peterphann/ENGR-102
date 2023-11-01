@@ -28,6 +28,7 @@ def main():
   file_name = input('Enter the name of the file: ')
   file = open(file_name)
   barcodes = file.read().splitlines()
+  file.close()
 
   # Initialize counter variable
   valid = 0
@@ -38,6 +39,7 @@ def main():
     if valid_barcode(barcode):
       valid += 1
       valid_file.write(barcode + "\n")
+  valid_file.close()
   print(f'There are {valid} valid barcodes')
 
 if __name__ == '__main__':
