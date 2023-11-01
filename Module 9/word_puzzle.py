@@ -76,7 +76,7 @@ def make_numbers(puzzle, guess):
   dividend = split[1]
   quotient = words[0]
   divisor = split[0]
-  remainder = words[len(words) - 1]
+  remainder = words[-1]
 
   # Call make_number on each word and return tuple
   return make_number(dividend, guess), make_number(quotient, guess), make_number(divisor, guess), make_number(remainder, guess)
