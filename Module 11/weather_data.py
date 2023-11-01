@@ -23,6 +23,8 @@ months = {
 }
 
 def mean(list):
+  '''Returns the mean of a list'''
+
   return sum(list) / len(list)
 
 def get_date(date):
