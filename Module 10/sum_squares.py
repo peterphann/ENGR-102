@@ -10,33 +10,37 @@
 from time import time
 from math import sqrt, ceil
 
-def limit(n):
-  # Get limit of number
-  if n < 0:
-    return 0
-  else:
-    return ceil(sqrt(n)) + 1
-
 def list_nums(n):
-  # Get maximum number that the term could potentially be
-  lim = limit(n)
+  # Get maximum number that a term could potentially be
+  lim = ceil(sqrt(n) + 1)
+
+  # Create dictionary with squares to avoid repeat computations
+  squares = {}
+  for i in range(lim):
+      squares[i] = i**2
+  
   # For each term, loop from 0 to the limit and see if it equals n
   for a in range(0, lim):
-      for b in range(a, limit(n - a**2)):
-          for c in range(b, limit(n - a**2 - b**2)):
-              for d in range(c, limit(n - a**2 - b**2 - c**2)):
-                  if a**2 + b**2 + c**2 + d**2 == n:
+      for b in range(a, lim):
+          for c in range(b, lim):
+              for d in range(c, lim):
+                  if squares[a] + squares[b] + squares[c] + squares[d] == n:
                       return [a, b, c, d]
                      
 def count_sets(n):
-  # Same process as list_nums but keep track of valid numbers
+  # Same as list_nums() but count number of valid sets
+  lim = ceil(sqrt(n) + 1)
+
+  squares = {}
+  for i in range(lim):
+      squares[i] = i**2
+  
   count = 0
-  limit = ceil(sqrt(n)) + 1
-  for a in range(0, limit):
-      for b in range(a, limit):
-          for c in range(b, limit):
-              for d in range(c, limit):
-                  if a**2 + b**2 + c**2 + d**2 == n:
+  for a in range(0, lim):
+      for b in range(a, lim):
+          for c in range(b, lim):
+              for d in range(c, lim):
+                  if squares[a] + squares[b] + squares[c] + squares[d] == n:
                       count += 1
   return count
 
