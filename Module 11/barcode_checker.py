@@ -26,20 +26,18 @@ def valid_barcode(barcode):
 def main():
   # Read file and split into barcodes
   file_name = input('Enter the name of the file: ')
-  file = open(file_name)
-  barcodes = file.read().splitlines()
-  file.close()
+  with open(file_name) as file:
+    barcodes = file.read().splitlines()
 
   # Initialize counter variable
   valid = 0
-  valid_file = open('valid_barcodes.txt', 'w')
 
-  # Loop through each barcode and call function
-  for barcode in barcodes:
-    if valid_barcode(barcode):
-      valid += 1
-      valid_file.write(barcode + "\n")
-  valid_file.close()
+# Loop through each barcode and call function
+  with open('valid_barcodes.txt', 'w') as valid_file:
+    for barcode in barcodes:
+      if valid_barcode(barcode):
+        valid += 1
+        valid_file.write(barcode + "\n")
   print(f'There are {valid} valid barcodes')
 
 if __name__ == '__main__':

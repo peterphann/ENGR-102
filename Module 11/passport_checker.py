@@ -30,18 +30,15 @@ def is_valid(passport):
   
 # Open the file provided and get passports
 file_name = input('Enter the name of the file: ')
-file = open(file_name)
-passports = file.read().split('\n\n')
-file.close()
+with open(file_name) as file:
+  passports = file.read().split('\n\n')
 
 # Loop through each passport and write to valid passports if valid
-output_file = open('valid_passports.txt', 'w')
-
-valid = 0
-for passport in passports:
-  if is_valid(passport):
-    valid += 1
-    output_file.write(passport + "\n\n")
-output_file.close()
+with open('valid_passports.txt', 'w') as output_file:
+  valid = 0
+  for passport in passports:
+    if is_valid(passport):
+      valid += 1
+      output_file.write(passport + "\n\n")
 
 print(f'There are {valid} valid passports')

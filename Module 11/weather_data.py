@@ -35,11 +35,10 @@ def get_date(date):
   return months[split[0]], split[2]
 
 # Open csv file and get data
-file = open('WeatherDataCLL.csv')
-data = file.readlines()
-days = [line.strip('\n') for line in data]
-days = [line.split(',') for line in days][1:]
-file.close()
+with open('WeatherDataCLL.csv') as file:
+  data = file.readlines()
+  days = [line.strip('\n') for line in data]
+  days = [line.split(',') for line in days][1:]
 
 # Use list comprehension to isolate the highs and low
 lows = [int(day[6]) for day in days if day[6].isdigit()]
