@@ -1,2 +1,2 @@
 # ENGR 102
-A repository of all my individual and team labs done during ENGR 102.
+A repository containing all my individual and team lab assignments for ENGR 102.
