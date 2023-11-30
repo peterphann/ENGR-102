@@ -18,8 +18,7 @@ class Board:
   def __init__(self) -> None:
     self.board = np.full((19, 19), 0)
     self.player = 1
-    self.p1_captures = 0
-    self.p2_captures = 0
+    self.p1_captures, self.p2_captures = 0, 0
 
   def next_player(self) -> None:
     self.player = 2 if self.player == 1 else 1
@@ -35,7 +34,7 @@ class Board:
     return ''.join(current_row)
   
   def get_column(self, row : int, column : int) -> str:
-    current_column = [row[column] for row in self.board]
+    current_column = self.board[:,column]
     current_column = [str(i) for i in current_column]
     return ''.join(current_column)
   
@@ -62,29 +61,29 @@ class Board:
     # Check row
     row_string = self.get_row(row, column)
     row_search = row_string.find(match)
-    if row_search != -1:
-      matches.update([(row, row_search + i) for i in range(5)])
+    matches.update([(row, row_search + i) for i in range(5) if row_search != -1])
+      
 
     # Check column
     column_string = self.get_column(row, column)
     column_search = column_string.find(match)
-    if column_search != -1:
-      matches.update([(column_search + i, column) for i in range(5)])
+    matches.update([(column_search + i, column) for i in range(5) if column_search != -1])
+      
 
     # Check diagonal
     starting_row, starting_column = row + min(18 - row, column), column - min(18 - row, column)
     diagonal_string = self.get_diagonal(row, column)
     diagonal_search = diagonal_string.find(match)
-    if diagonal_search != -1:
-      matches.update([(starting_row - diagonal_search - i, starting_column + diagonal_search + i) for i in range(5)])
+    matches.update([(starting_row - diagonal_search - i, starting_column + diagonal_search + i) for i in range(5) if diagonal_search != -1])
+      
 
     # Check antidiagonal
     boundary = min(row, column)
     starting_row, starting_column = row - boundary, column - boundary
     antidiagonal_string = self.get_antidiagonal(row, column)
     antidiagonal_search = antidiagonal_string.find(match)
-    if antidiagonal_search != -1:
-      matches.update([(starting_row + antidiagonal_search + i, starting_column + antidiagonal_search + i) for i in range(5)])
+    matches.update([(starting_row + antidiagonal_search + i, starting_column + antidiagonal_search + i) for i in range(5) if antidiagonal_search != -1])
+      
 
     if len(matches) > 0:
       self.place_winner(matches)
@@ -93,7 +92,7 @@ class Board:
 
   def check_capture(self, row : int, column : int):
     opponent = 2 if self.player == 1 else 1
-    match = str(self.player) + (str(opponent) * 2) + str(self.player)
+    match = f'{str(self.player)}{str(opponent) * 2}{str(self.player)}'
     captures = 0
     captured = set()
 
@@ -121,22 +120,18 @@ class Board:
     for match in matches:
       self.board[match[0]][match[1]] = self.player + 2
 
-  def __str__(self) -> str:
-    output = ''
-
-    output += f'{"A B C D E F G H I J K L M N O P Q R S":>40}\n'
+  def display(self) -> None:
+    EMPTY = '.'
+    PLAYER1 = Fore.RED + Style.BRIGHT + chr(9679) + Fore.RESET + Style.NORMAL
+    PLAYER2 = Fore.GREEN + Style.BRIGHT + chr(9679) + Fore.RESET + Style.NORMAL
+    WINNER1 = Fore.RED + Style.BRIGHT + chr(9733) + Fore.RESET + Style.NORMAL
+    WINNER2 = Fore.GREEN + Style.BRIGHT + chr(9733) + Fore.RESET + Style.NORMAL
+    print('-' * 40)
+    print(f'{"A B C D E F G H I J K L M N O P Q R S":>40}')
     for index, row in enumerate(self.board):
-      EMPTY = '.'
-      PLAYER1 = Fore.RED + Style.BRIGHT + chr(9679) + Fore.RESET + Style.NORMAL
-      PLAYER2 = Fore.GREEN + Style.BRIGHT + chr(9679) + Fore.RESET + Style.NORMAL
-      WINNER1 = Fore.RED + Style.BRIGHT + chr(9733) + Fore.RESET + Style.NORMAL
-      WINNER2 = Fore.GREEN + Style.BRIGHT + chr(9733) + Fore.RESET + Style.NORMAL
-
       row = [PLAYER1 if tile == 1 else PLAYER2 if tile == 2 else WINNER1 if tile == 3 else WINNER2 if tile == 4 else EMPTY for tile in row]
-      output += f'{index + 1:>2} {" ".join(row)}\n'
-    output += '-' * 40
-    
-    return output
+      print(f'{index + 1:>2} {" ".join(row)}')
+    print('-' * 40)
 
 def parse_cell(cell : str):
   letters = 'ABCDEFGHIJKLMNOPQRS'
@@ -149,7 +144,7 @@ def main():
   board = Board()
 
   # Call initial input & display
-  print(board)
+  board.display()
   print('Welcome to Pente - Good luck!')
   user_input = ''
 
@@ -164,11 +159,11 @@ def main():
     try:
       row, column = parse_cell(user_input)
       if board.board[row][column] != 0:
-        print(board)
+        board.display()
         print(f'The tile {user_input} is already taken!')
         continue
     except:
-      print(board)
+      board.display()
       print(f'Your input "{user_input}" is invalid!')
       continue
 
@@ -176,7 +171,7 @@ def main():
     board.place(row, column)
     is_finished = board.check_five(row, column)
     board.check_capture(row, column)
-    print(board)
+    board.display()
     if is_finished or board.p1_captures == 5 or board.p2_captures == 5:
       break
 
