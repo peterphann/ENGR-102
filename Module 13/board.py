@@ -96,7 +96,7 @@ class Board:
       return True
     return False
   
-  def check_capture(self, row : int, column : int) -> None:
+  def check_capture(self, row : int, column : int) -> bool:
     opponent = 2 if self.board[row, column] == 1 else 1
     pattern = str(self.player) + (str(opponent) * 2) + str(self.player)
     matches = []
@@ -107,8 +107,10 @@ class Board:
     matches.extend(self.find_antidiagonal(row, column, pattern))
 
     captures_found = len(matches) // 4
+    has_captured = False
     for i in range(captures_found):
       if (row, column) not in matches[4 * i : 4 * i + 4]: continue
+      has_captured = True
       captured1, captured2 = matches[4 * i + 1], matches[4 * i + 2]
       self.remove(captured1[0], captured1[1])
       self.remove(captured2[0], captured2[1])
@@ -116,6 +118,8 @@ class Board:
         self.p1_captures += 1
       else:
         self.p2_captures += 1
+    
+    return has_captured
 
   def place_winner(self, matches : set) -> None:
     for match in matches:
