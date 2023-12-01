@@ -21,9 +21,9 @@ def parse_cell(cell : str):
 
 def print_scoreboard(board : Board, user_input : str, message : str):
   score_display = color('Score: ', SECONDARY_COLOR) + color(str(board.p1_captures), PLAYER1_COLOR) + ' ' + color(str(board.p2_captures), PLAYER2_COLOR)
-  player_display = color("P1", PLAYER1_COLOR) if board.player == 1 else color("P2", PLAYER2_COLOR)
+  player_display = color("P2", PLAYER2_COLOR) if board.player == 1 else color("P1", PLAYER1_COLOR)
   bar_display = color("|", MAIN_COLOR)
-  tile_display = color('→ ' + user_input, SECONDARY_COLOR)
+  tile_display = color('→ ' + user_input.upper(), SECONDARY_COLOR)
   message_display = color(message, SECONDARY_COLOR)
   print(f'{score_display} {bar_display} {player_display} {tile_display} {bar_display} {message_display}')
 
@@ -49,13 +49,13 @@ def main():
     try:
       row, column = parse_cell(user_input)
     except:
-      message = f'Invalid input "{user_input}". Please enter a valid tile (e.g., A1).'
+      message = f'Invalid input "{user_input}"'
       continue
     if not (0 <= row <= 18) or not (0 <= column <= 18):
       message = f'The tile {user_input} is outside the board. Please enter a valid tile (ex. A1).'
       continue
     if board.board[row, column] != 0:
-      message = f'The tile {user_input} is already taken. Please enter another tile.'
+      message = f'{user_input.upper()} is already taken'
       continue
 
     # Place piece on specified tile and check for patterns
