@@ -72,7 +72,6 @@ def main():
 
   board.display()
   if user_input == 'stop':  
-    print(DIVIDER_LINE)
     if board.player == 1:
       print(f'{color("Red", PLAYER1_COLOR)} forfeited! {color("Green", PLAYER2_COLOR)} wins!')
     else:

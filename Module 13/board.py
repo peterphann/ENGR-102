@@ -8,7 +8,6 @@ MAIN_COLOR = Fore.MAGENTA
 SECONDARY_COLOR = Fore.BLACK
 PLAYER1_COLOR = Fore.RED
 PLAYER2_COLOR = Fore.GREEN
-DIVIDER_LINE = '━' * 40
 
 class Board:
   def __init__(self) -> None:
