@@ -62,20 +62,18 @@ class Board:
     row_string = self.get_row(row, column)
     row_search = row_string.find(match)
     matches.update([(row, row_search + i) for i in range(5) if row_search != -1])
-      
 
     # Check column
     column_string = self.get_column(row, column)
     column_search = column_string.find(match)
     matches.update([(column_search + i, column) for i in range(5) if column_search != -1])
-      
 
     # Check diagonal
-    starting_row, starting_column = row + min(18 - row, column), column - min(18 - row, column)
+    boundary = min(18 - row, column)
+    starting_row, starting_column = row + boundary, column - boundary
     diagonal_string = self.get_diagonal(row, column)
     diagonal_search = diagonal_string.find(match)
     matches.update([(starting_row - diagonal_search - i, starting_column + diagonal_search + i) for i in range(5) if diagonal_search != -1])
-      
 
     # Check antidiagonal
     boundary = min(row, column)
@@ -84,7 +82,6 @@ class Board:
     antidiagonal_search = antidiagonal_string.find(match)
     matches.update([(starting_row + antidiagonal_search + i, starting_column + antidiagonal_search + i) for i in range(5) if antidiagonal_search != -1])
       
-
     if len(matches) > 0:
       self.place_winner(matches)
       return True
@@ -108,6 +105,22 @@ class Board:
       captures += 1
       captured.update([(column_search + 1, column), (column_search + 2, column)])
 
+    boundary = min(18 - row, column)
+    starting_row, starting_column = row + boundary, column - boundary
+    diagonal_string = self.get_diagonal(row, column)
+    diagonal_search = diagonal_string.find(match)
+    if diagonal_search != -1:
+      captures += 1
+      captured.update([(starting_row - diagonal_search - 1, starting_column + diagonal_search + 1), (starting_row - diagonal_search - 2, starting_column + diagonal_search + 2)])
+
+    boundary = min(row, column)
+    starting_row, starting_column = row - boundary, column - boundary
+    antidiagonal_string = self.get_antidiagonal(row, column)
+    antidiagonal_search = antidiagonal_string.find(match)
+    if antidiagonal_search != -1:
+      captures += 1
+      captured.update([(starting_row + antidiagonal_search + 1, starting_column + antidiagonal_search + 1), (starting_row + antidiagonal_search + 2, starting_column + antidiagonal_search + 2)])
+
     if self.player == 1:
       self.p1_captures += captures
     else:
@@ -126,12 +139,12 @@ class Board:
     PLAYER2 = Fore.GREEN + Style.BRIGHT + chr(9679) + Fore.RESET + Style.NORMAL
     WINNER1 = Fore.RED + Style.BRIGHT + chr(9733) + Fore.RESET + Style.NORMAL
     WINNER2 = Fore.GREEN + Style.BRIGHT + chr(9733) + Fore.RESET + Style.NORMAL
-    print('-' * 40)
+    print(color_text('-' * 40, Fore.YELLOW))
     print(f'{"A B C D E F G H I J K L M N O P Q R S":>40}')
     for index, row in enumerate(self.board):
       row = [PLAYER1 if tile == 1 else PLAYER2 if tile == 2 else WINNER1 if tile == 3 else WINNER2 if tile == 4 else EMPTY for tile in row]
       print(f'{index + 1:>2} {" ".join(row)}')
-    print('-' * 40)
+    print(color_text('-' * 40, Fore.YELLOW))
 
 def parse_cell(cell : str):
   letters = 'ABCDEFGHIJKLMNOPQRS'
@@ -139,32 +152,38 @@ def parse_cell(cell : str):
   row = int(cell[1:]) - 1
   return row, column
 
-def main():
-  # Initialize board and dictionary to convert letters to numbers
-  board = Board()
+def color_text(text : str, color) -> str:
+  return color + Style.BRIGHT + text + Fore.RESET + Style.NORMAL
 
-  # Call initial input & display
+def main():
+  # Initialize board and call initial input
+  board = Board()
   board.display()
   print('Welcome to Pente - Good luck!')
   user_input = ''
 
   # Main game loop
-  while user_input != 'stop':  
-
-    user_input = input(f'{"[Red]" if board.player == 1 else "[Green]"} Enter tile: ')
+  while user_input != 'stop':
+    player1_name = color_text('[Player 1]', Fore.RED)
+    player2_name = color_text('[Player 2]', Fore.GREEN)
+    user_input = input(f'{player1_name if board.player == 1 else player2_name} Enter tile: ').upper()
     if user_input == 'stop':
       break
 
-    # Parse user input
+    # Parse user input and check for any errors
     try:
       row, column = parse_cell(user_input)
+      if not (0 <= row <= 18) or not (0 <= column <= 18):
+        raise ValueError(f'The tile {user_input} is outside the board. Please enter a valid tile (ex. A1).')
       if board.board[row][column] != 0:
-        board.display()
-        print(f'The tile {user_input} is already taken!')
-        continue
-    except:
+        raise ValueError(f'Invalid input "{user_input}". Please enter a valid tile (e.g., A1).')
+    except ValueError as e:
       board.display()
-      print(f'Your input "{user_input}" is invalid!')
+      print(e)
+      continue
+    except IndexError:
+      board.display()
+      print('Daniels a bitch')
       continue
 
     # Place piece on specified tile and check for patterns
@@ -176,10 +195,10 @@ def main():
       break
 
     # Swap players and continue
-    print(f'{"R" if board.player == 1 else "G"}>{user_input} | P1 {board.p1_captures} vs. P2 {board.p2_captures}')
+    print(f'P1 {board.p1_captures} {board.p2_captures} P2 | {"P1" if board.player == 1 else "P2"} → {user_input}')
     board.next_player()
 
-  if user_input == 'stop':
+  if user_input == 'stop':  
     print('-' * 40)
     if board.player == 1:
       print('Red forfeited! Green wins!')
