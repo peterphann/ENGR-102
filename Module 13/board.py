@@ -1,8 +1,13 @@
 from colorama import Fore, Style
 import numpy as np
 
-def color_text(text : str, color) -> str:
+def color(text : str, color) -> str:
   return color + Style.BRIGHT + text + Fore.RESET + Style.NORMAL
+
+MAIN_COLOR = Fore.YELLOW
+PLAYER1_COLOR = Fore.RED
+PLAYER2_COLOR = Fore.GREEN
+DIVIDER_LINE = '━' * 40
 
 class Board:
   def __init__(self) -> None:
@@ -96,14 +101,16 @@ class Board:
       self.board[match[0]][match[1]] = self.player + 2
 
   def display(self) -> None:
-    EMPTY = '.'
-    PLAYER1 = Fore.RED + Style.BRIGHT + chr(9679) + Fore.RESET + Style.NORMAL
-    PLAYER2 = Fore.GREEN + Style.BRIGHT + chr(9679) + Fore.RESET + Style.NORMAL
-    WINNER1 = Fore.RED + Style.BRIGHT + chr(9733) + Fore.RESET + Style.NORMAL
-    WINNER2 = Fore.GREEN + Style.BRIGHT + chr(9733) + Fore.RESET + Style.NORMAL
-    print(color_text('-' * 40, Fore.YELLOW))
-    print(f'{"A B C D E F G H I J K L M N O P Q R S":>40}')
+    EMPTY = color('.', Fore.BLACK)
+    PLAYER1 = color(chr(9679), PLAYER1_COLOR)
+    PLAYER2 = color(chr(9679), PLAYER2_COLOR)
+    WINNER1 = color(chr(9733), PLAYER1_COLOR)
+    WINNER2 = color(chr(9733), PLAYER2_COLOR)
+    print(color(DIVIDER_LINE, MAIN_COLOR))
+
+    column_names = color('A B C D E F G H I J K L M N O P Q R S', Fore.WHITE)
+    print(f'{column_names:>59}')
     for index, row in enumerate(self.board):
       row = [PLAYER1 if tile == 1 else PLAYER2 if tile == 2 else WINNER1 if tile == 3 else WINNER2 if tile == 4 else EMPTY for tile in row]
       print(f'{index + 1:>2} {" ".join(row)}')
-    print(color_text('-' * 40, Fore.YELLOW))
+    print(color(DIVIDER_LINE, MAIN_COLOR))
