@@ -1,7 +1,10 @@
+from colorama import Fore, Style
 import numpy as np
 
+def color_text(text : str, color) -> str:
+  return color + Style.BRIGHT + text + Fore.RESET + Style.NORMAL
+
 class Board:
-  
   def __init__(self) -> None:
     self.board = np.full((19, 19), 0)
     self.player = 1
