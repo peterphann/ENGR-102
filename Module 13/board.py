@@ -5,7 +5,7 @@ def color(text : str, color) -> str:
   return color + Style.BRIGHT + text + Fore.RESET + Style.NORMAL
 
 MAIN_COLOR = Fore.MAGENTA
-SECONDARY_COLOR = Fore.BLACK
+SECONDARY_COLOR = Fore.WHITE
 PLAYER1_COLOR = Fore.RED
 PLAYER2_COLOR = Fore.GREEN
 
