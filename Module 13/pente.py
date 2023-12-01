@@ -13,6 +13,7 @@
 from board import *
 
 def parse_cell(cell : str):
+  cell = cell.upper()
   letters = 'ABCDEFGHIJKLMNOPQRS'
   column = letters.index(cell[0].upper())
   row = int(cell[1:]) - 1
@@ -34,26 +35,27 @@ def main():
   user_input = ''
   last_valid_input = '?'
   message = 'Welcome to Pente!'
-  while user_input != 'STOP':
+  while user_input != 'stop':
     player1_name = color('[Player 1]', PLAYER1_COLOR)
     player2_name = color('[Player 2]', PLAYER2_COLOR)
 
     board.display()   
     print_scoreboard(board, last_valid_input, message)
-    user_input = input(f'{player1_name if board.player == 1 else player2_name}{Fore.BLACK + Style.BRIGHT} Enter tile: ').upper()
-    if user_input == 'STOP':
+    user_input = input(f'{player1_name if board.player == 1 else player2_name}{Fore.BLACK + Style.BRIGHT} Enter tile: ')
+    if user_input == 'stop':
       break
 
     # Parse user input and check for any errors
-    row, column = parse_cell(user_input)
-    if board.board[row, column] != 0:
-      message = f'The tile {user_input} is already taken. Please enter another tile.'
+    try:
+      row, column = parse_cell(user_input)
+    except:
+      message = f'Invalid input "{user_input}". Please enter a valid tile (e.g., A1).'
       continue
     if not (0 <= row <= 18) or not (0 <= column <= 18):
       message = f'The tile {user_input} is outside the board. Please enter a valid tile (ex. A1).'
       continue
-    if board.board[row][column] != 0:
-      message = f'Invalid input "{user_input}". Please enter a valid tile (e.g., A1).'
+    if board.board[row, column] != 0:
+      message = f'The tile {user_input} is already taken. Please enter another tile.'
       continue
 
     # Place piece on specified tile and check for patterns
@@ -69,7 +71,7 @@ def main():
     board.next_player()
 
   board.display()
-  if user_input == 'STOP':  
+  if user_input == 'stop':  
     print(DIVIDER_LINE)
     if board.player == 1:
       print(f'{color("Red", PLAYER1_COLOR)} forfeited! {color("Green", PLAYER2_COLOR)} wins!')
