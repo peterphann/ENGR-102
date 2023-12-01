@@ -8,7 +8,7 @@
 # Benjamin Sandefur
 # Section: 521
 # Assignment: go_moves lab
-# Date: 2 October 2023
+# Date: 1 December 2023
 
 from colorama import Fore, Style
 import numpy as np
@@ -29,105 +29,77 @@ class Board:
   def remove(self, row : int, column : int) -> None:
     self.board[row][column] = 0
   
-  def get_row(self, row : int, column : int) -> str:
-    current_row = [str(i) for i in self.board[row]]
-    return ''.join(current_row)
-  
-  def get_column(self, row : int, column : int) -> str:
-    current_column = self.board[:,column]
-    current_column = [str(i) for i in current_column]
-    return ''.join(current_column)
-  
-  def get_diagonal(self, row : int, column : int) -> str:
-    boundary = min(18 - row, column)
-    starting_row, starting_column = row + boundary, column - boundary
-    diagonal_steps = min(starting_row, 18 - starting_column)
-    current_diagonal = [self.board[starting_row - i][starting_column + i] for i in range(diagonal_steps + 1)]
-    current_diagonal = [str(i) for i in current_diagonal]
-    return ''.join(current_diagonal)
-  
-  def get_antidiagonal(self, row : int, column : int) -> str:
-    boundary = min(row, column)
-    starting_row, starting_column = row - boundary, column - boundary
-    antidiagonal_steps = min(18 - row, 18 - column)
-    current_antidiagonal = [self.board[starting_row + i][starting_column + i] for i in range(antidiagonal_steps + 1)]
-    current_antidiagonal = [str(i) for i in current_antidiagonal]
-    return ''.join(current_antidiagonal)
+  def find_row(self, row : int, column : int, pattern : str):
+    cells = []
+    row_list = self.board[row]
+    row_string = ''.join([str(i) for i in row_list])
 
+    pattern_index = row_string.find(pattern)
+    while pattern_index != -1:
+      matched_cells = [(row, pattern_index + i) for i in range(len(pattern))]
+      cells.extend(matched_cells)
+      pattern_index = row_string.find(pattern, pattern_index + 1)
+    return cells
+
+  def find_column(self, row : int, column : int, pattern : str):
+    cells = []
+    column_list = self.board[:,column]
+    column_string = ''.join([str(i) for i in column_list])
+
+    pattern_index = column_string.find(pattern)
+    while pattern_index != -1:
+      matched_cells = [(pattern_index + i, column) for i in range(len(pattern))]
+      cells.extend(matched_cells)
+      pattern_index = column_string.find(pattern, pattern_index + 1)
+    return cells
+
+  def find_diagonal(self, row : int, column : int, pattern : str):
+    cells = []
+
+    offset = min(8 - row, column)
+    start_row, start_column = row + offset, column - offset
+    steps = min(start_row, 8 - start_column) + 1
+
+    diagonal = [self.board[start_row - i, start_column + i] for i in range(steps)]
+    diagonal_string = ''.join([str(i) for i in diagonal])
+
+    pattern_index = diagonal_string.find(pattern)
+    while pattern_index != -1:
+      matched_cells = [(start_row - pattern_index - i, start_column + pattern_index + i) for i in range(len(pattern))]
+      cells.extend(matched_cells)
+      pattern_index = diagonal_string.find(pattern, pattern_index + 1)
+    return cells
+
+  def find_antidiagonal(self, row : int, column : int, pattern : str):
+    cells = []
+    
+    offset = min(row, column)
+    start_row, start_column = row - offset, column - offset
+    steps = min(8 - start_row, 8 - start_column) + 1
+
+    diagonal = [self.board[start_row + i, start_column + i] for i in range(steps)]
+    diagonal_string = ''.join([str(i) for i in diagonal])
+
+    pattern_index = diagonal_string.find(pattern)
+    while pattern_index != -1:
+      matched_cells = [(start_row + pattern_index + i, start_column + pattern_index + i) for i in range(len(pattern))]
+      cells.extend(matched_cells)
+      pattern_index = diagonal_string.find(pattern, pattern_index + 1)
+    return cells
+  
   def check_five(self, row : int, column : int) -> bool:
-    match = str(self.player) * 5
+    pattern = str(self.player) * 5
     matches = set()
 
-    # Check row
-    row_string = self.get_row(row, column)
-    row_search = row_string.find(match)
-    matches.update([(row, row_search + i) for i in range(5) if row_search != -1])
+    matches.update(self.find_row(row, column, pattern))
+    matches.update(self.find_column(row, column, pattern))
+    matches.update(self.find_diagonal(row, column, pattern))
+    matches.update(self.find_antidiagonal(row, column, pattern))
 
-    # Check column
-    column_string = self.get_column(row, column)
-    column_search = column_string.find(match)
-    matches.update([(column_search + i, column) for i in range(5) if column_search != -1])
-
-    # Check diagonal
-    boundary = min(18 - row, column)
-    starting_row, starting_column = row + boundary, column - boundary
-    diagonal_string = self.get_diagonal(row, column)
-    diagonal_search = diagonal_string.find(match)
-    matches.update([(starting_row - diagonal_search - i, starting_column + diagonal_search + i) for i in range(5) if diagonal_search != -1])
-
-    # Check antidiagonal
-    boundary = min(row, column)
-    starting_row, starting_column = row - boundary, column - boundary
-    antidiagonal_string = self.get_antidiagonal(row, column)
-    antidiagonal_search = antidiagonal_string.find(match)
-    matches.update([(starting_row + antidiagonal_search + i, starting_column + antidiagonal_search + i) for i in range(5) if antidiagonal_search != -1])
-      
     if len(matches) > 0:
       self.place_winner(matches)
       return True
     return False
-
-  def check_capture(self, row : int, column : int):
-    opponent = 2 if self.player == 1 else 1
-    match = f'{str(self.player)}{str(opponent) * 2}{str(self.player)}'
-    captures = 0
-    captured = set()
-
-    row_string = self.get_row(row, column)
-    row_search = row_string.find(match)
-    if row_search != -1:
-      captures += 1
-      captured.update([(row, row_search + 1), (row, row_search + 2)])
-
-    column_string = self.get_column(row, column)
-    column_search = column_string.find(match)
-    if column_search != -1:
-      captures += 1
-      captured.update([(column_search + 1, column), (column_search + 2, column)])
-
-    boundary = min(18 - row, column)
-    starting_row, starting_column = row + boundary, column - boundary
-    diagonal_string = self.get_diagonal(row, column)
-    diagonal_search = diagonal_string.find(match)
-    if diagonal_search != -1:
-      captures += 1
-      captured.update([(starting_row - diagonal_search - 1, starting_column + diagonal_search + 1), (starting_row - diagonal_search - 2, starting_column + diagonal_search + 2)])
-
-    boundary = min(row, column)
-    starting_row, starting_column = row - boundary, column - boundary
-    antidiagonal_string = self.get_antidiagonal(row, column)
-    antidiagonal_search = antidiagonal_string.find(match)
-    if antidiagonal_search != -1:
-      captures += 1
-      captured.update([(starting_row + antidiagonal_search + 1, starting_column + antidiagonal_search + 1), (starting_row + antidiagonal_search + 2, starting_column + antidiagonal_search + 2)])
-
-    if self.player == 1:
-      self.p1_captures += captures
-    else:
-      self.p2_captures += captures
-
-    for point in captured:
-      self.remove(point[0], point[1])
 
   def place_winner(self, matches : set) -> None:
     for match in matches:
@@ -183,13 +155,14 @@ def main():
       continue
     except IndexError:
       board.display()
-      print('Daniels a bitch')
+      print('Error')
       continue
 
     # Place piece on specified tile and check for patterns
     board.place(row, column)
     is_finished = board.check_five(row, column)
-    board.check_capture(row, column)
+    print(f'is_finished: {is_finished}')
+    # board.check_capture(row, column)
     board.display()
     if is_finished or board.p1_captures == 5 or board.p2_captures == 5:
       break
