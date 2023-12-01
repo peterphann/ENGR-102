@@ -84,17 +84,38 @@ class Board:
   
   def check_five(self, row : int, column : int) -> bool:
     pattern = str(self.player) * 5
-    matches = set()
+    matches = []
 
-    matches.update(self.find_row(row, column, pattern))
-    matches.update(self.find_column(row, column, pattern))
-    matches.update(self.find_diagonal(row, column, pattern))
-    matches.update(self.find_antidiagonal(row, column, pattern))
+    matches.extend(self.find_row(row, column, pattern))
+    matches.extend(self.find_column(row, column, pattern))
+    matches.extend(self.find_diagonal(row, column, pattern))
+    matches.extend(self.find_antidiagonal(row, column, pattern))
 
     if len(matches) > 0:
       self.place_winner(matches)
       return True
     return False
+  
+  def check_capture(self, row : int, column : int) -> None:
+    opponent = 2 if self.board[row, column] == 1 else 1
+    pattern = str(self.player) + (str(opponent) * 2) + str(self.player)
+    matches = []
+
+    matches.extend(self.find_row(row, column, pattern))
+    matches.extend(self.find_column(row, column, pattern))
+    matches.extend(self.find_diagonal(row, column, pattern))
+    matches.extend(self.find_antidiagonal(row, column, pattern))
+
+    captures_found = len(matches) // 4
+    for i in range(captures_found):
+      if (row, column) not in matches[4 * i : 4 * i + 4]: continue
+      captured1, captured2 = matches[4 * i + 1], matches[4 * i + 2]
+      self.remove(captured1[0], captured1[1])
+      self.remove(captured2[0], captured2[1])
+      if self.player == 1:
+        self.p1_captures += 1
+      else:
+        self.p2_captures += 1
 
   def place_winner(self, matches : set) -> None:
     for match in matches:
