@@ -35,52 +35,57 @@ def main():
   user_input = ''
   last_valid_input = '?'
   message = 'Welcome to Pente!'
-  while user_input != 'stop':
-    player1_name = color('[Player 1]', PLAYER1_COLOR)
-    player2_name = color('[Player 2]', PLAYER2_COLOR)
+  player1_name = color('[Player 1]', PLAYER1_COLOR)
+  player2_name = color('[Player 2]', PLAYER2_COLOR)
 
+  while user_input != 'stop':
     board.display()   
     print_scoreboard(board, last_valid_input, message)
     user_input = input(f'{player1_name if board.player == 1 else player2_name}{Fore.BLACK + Style.BRIGHT} Enter tile: ')
+    
     if user_input == 'stop':
+      player_display = color("Player 1", PLAYER1_COLOR) if board.player == 1 else color("Player 2", PLAYER2_COLOR)
+      opponent_display = color("Player 1", PLAYER1_COLOR) if board.player == 2 else color("Player 2", PLAYER2_COLOR)
+      message = f'\n{player_display} {color("forfeited!", SECONDARY_COLOR)} {opponent_display} {color("wins!", SECONDARY_COLOR)}'
       break
 
     # Parse user input and check for any errors
     try:
       row, column = parse_cell(user_input)
     except:
-      message = f'Invalid input "{user_input}"'
+      message = f'Invalid input "{user_input}".'
       continue
     if not (0 <= row <= 18) or not (0 <= column <= 18):
-      message = f'The tile {user_input} is outside the board. Please enter a valid tile (ex. A1).'
+      message = f'{user_input.upper()} is outside the board.'
       continue
     if board.board[row, column] != 0:
-      message = f'{user_input.upper()} is already taken'
+      message = f'{user_input.upper()} is already taken.'
       continue
 
     # Place piece on specified tile and check for patterns
     last_valid_input = user_input
     message = ''
     board.place(row, column)
-    is_finished = board.check_five(row, column)
-    board.check_capture(row, column)
-    if is_finished or board.p1_captures == 5 or board.p2_captures == 5:
+    has_five_in_row = board.check_five(row, column)
+    has_captured = board.check_capture(row, column)
+
+    if has_captured:
+      player_display = color("P1", PLAYER1_COLOR) if board.player == 1 else color("P2", PLAYER2_COLOR)
+      message = f'{player_display} {color("captured some tiles!", SECONDARY_COLOR)}'
+    if has_five_in_row:
+      player_display = color("Player 1", PLAYER1_COLOR) if board.player == 1 else color("Player 2", PLAYER2_COLOR)
+      message = f'\n{player_display} {color("got five in a row!", SECONDARY_COLOR)} {player_display} {color("wins!", SECONDARY_COLOR)}'
+      break
+    if board.p1_captures == 5 or board.p2_captures == 5:
+      player_display = color("Player 1", PLAYER1_COLOR) if board.player == 1 else color("Player 2", PLAYER2_COLOR)
+      message = f'\n{player_display} {color("got five captures!", SECONDARY_COLOR)} {player_display} {color("wins!", SECONDARY_COLOR)}'
       break
 
     # Swap players and continue
     board.next_player()
 
   board.display()
-  if user_input == 'stop':  
-    if board.player == 1:
-      print(f'{color("Red", PLAYER1_COLOR)} forfeited! {color("Green", PLAYER2_COLOR)} wins!')
-    else:
-      print(f'{color("Green", PLAYER2_COLOR)} forfeited! {color("Red", PLAYER1_COLOR)} wins')
-  else:
-    if board.player == 1:
-      print(f'{color("Red", PLAYER1_COLOR)} {color("got five in a row!", SECONDARY_COLOR)} {color("Red wins!", PLAYER1_COLOR)}')
-    else:
-      print(f'{color("Green", PLAYER2_COLOR)} {color("got five in a row!", SECONDARY_COLOR)} {color("Green wins!", PLAYER2_COLOR)}')
-
+  print_scoreboard(board, last_valid_input, message)
+  
 if __name__ == '__main__':
   main()
