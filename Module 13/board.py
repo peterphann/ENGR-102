@@ -4,7 +4,8 @@ import numpy as np
 def color(text : str, color) -> str:
   return color + Style.BRIGHT + text + Fore.RESET + Style.NORMAL
 
-MAIN_COLOR = Fore.YELLOW
+MAIN_COLOR = Fore.MAGENTA
+SECONDARY_COLOR = Fore.BLACK
 PLAYER1_COLOR = Fore.RED
 PLAYER2_COLOR = Fore.GREEN
 DIVIDER_LINE = '━' * 40
@@ -106,11 +107,14 @@ class Board:
     PLAYER2 = color(chr(9679), PLAYER2_COLOR)
     WINNER1 = color(chr(9733), PLAYER1_COLOR)
     WINNER2 = color(chr(9733), PLAYER2_COLOR)
-    print(color(DIVIDER_LINE, MAIN_COLOR))
+
+    top_edge = '┏' + ('━' * 42) + '┓'
+    bottom_edge = '┗' + ('━' * 42) + '┛'
+    print(color(top_edge, MAIN_COLOR))
 
     column_names = color('A B C D E F G H I J K L M N O P Q R S', Fore.WHITE)
-    print(f'{column_names:>59}')
+    print(f'{color("┃", MAIN_COLOR)}{column_names:>60} {color("┃", MAIN_COLOR)}')
     for index, row in enumerate(self.board):
       row = [PLAYER1 if tile == 1 else PLAYER2 if tile == 2 else WINNER1 if tile == 3 else WINNER2 if tile == 4 else EMPTY for tile in row]
-      print(f'{index + 1:>2} {" ".join(row)}')
-    print(color(DIVIDER_LINE, MAIN_COLOR))
+      print(f'{color("┃", MAIN_COLOR)} {color(str(index + 1), Fore.WHITE):>21} {" ".join(row)} {color("┃", MAIN_COLOR)}')
+    print(color(bottom_edge, MAIN_COLOR))
