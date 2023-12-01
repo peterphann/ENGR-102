@@ -7,7 +7,7 @@
 # Claudia Phan
 # Benjamin Sandefur
 # Section: 521
-# Assignment: go_moves lab
+# Assignment: Lab 13
 # Date: 1 December 2023
 
 from board import *
