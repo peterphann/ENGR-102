@@ -10,8 +10,7 @@
 # Assignment: go_moves lab
 # Date: 1 December 2023
 
-from colorama import Fore
-from board import Board, color_text
+from board import *
 
 def parse_cell(cell : str):
   letters = 'ABCDEFGHIJKLMNOPQRS'
@@ -20,19 +19,17 @@ def parse_cell(cell : str):
   return row, column
 
 def main():
-  divider_line = color_text('-' * 40, Fore.YELLOW)
-
   # Initialize board and call initial input
   board = Board()
   board.display()
-  print('Welcome to Pente - Good luck!')
-  user_input = ''
-
+  print(color('Welcome to Pente - Good luck!', MAIN_COLOR))
+  
   # Main game loop
+  user_input = ''
   while user_input != 'STOP':
-    player1_name = color_text('[Player 1]', Fore.RED)
-    player2_name = color_text('[Player 2]', Fore.GREEN)
-    user_input = input(f'{player1_name if board.player == 1 else player2_name} Enter tile: ').upper()
+    player1_name = color('[Player 1]', PLAYER1_COLOR)
+    player2_name = color('[Player 2]', PLAYER2_COLOR)
+    user_input = input(f'{player1_name if board.player == 1 else player2_name} {color("Enter tile: ", Fore.BLACK)}').upper()
     if user_input == 'STOP':
       break
 
@@ -62,20 +59,23 @@ def main():
       break
 
     # Swap players and continue
-    print(f'P1 {board.p1_captures} {board.p2_captures} P2 | {"P1" if board.player == 1 else "P2"} → {user_input}')
+    score_display = color('Score: ', MAIN_COLOR) + color(str(board.p1_captures), PLAYER1_COLOR) + ' ' + color(str(board.p2_captures), PLAYER2_COLOR)
+    player_display = color("P1", PLAYER1_COLOR) if board.player == 1 else color("P2", PLAYER2_COLOR)
+    tile_display = color('→ ' + user_input, Fore.BLACK)
+    print(f'{score_display} {color("|", Fore.BLACK)} {player_display} {tile_display}')
     board.next_player()
 
   if user_input == 'STOP':  
-    print(divider_line)
+    print(DIVIDER_LINE)
     if board.player == 1:
-      print(f'{color_text("Red", Fore.RED)} forfeited! {color_text("Green", Fore.GREEN)} wins!')
+      print(f'{color("Red", PLAYER1_COLOR)} forfeited! {color("Green", PLAYER2_COLOR)} wins!')
     else:
-      print(f'{color_text("Green", Fore.GREEN)} forfeited! {color_text("Red", Fore.RED)} wins')
+      print(f'{color("Green", PLAYER2_COLOR)} forfeited! {color("Red", PLAYER1_COLOR)} wins')
   else:
     if board.player == 1:
-      print(f'{color_text("Red", Fore.RED)} got five in a row! {color_text("Red", Fore.RED)} wins!')
+      print(f'{color("Red", PLAYER1_COLOR)} got five in a row! {color("Red", PLAYER1_COLOR)} wins!')
     else:
-      print(f'{color_text("Green", Fore.GREEN)} got five in a row! {color_text("Green", Fore.GREEN)} wins!')
+      print(f'{color("Green", PLAYER2_COLOR)} got five in a row! {color("Green", PLAYER2_COLOR)} wins!')
 
 if __name__ == '__main__':
   main()
