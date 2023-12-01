@@ -60,10 +60,10 @@ def main():
 
     # Place piece on specified tile and check for patterns
     last_valid_input = user_input
+    message = ''
     board.place(row, column)
     is_finished = board.check_five(row, column)
-    print(f'is_finished: {is_finished}')
-    # board.check_capture(row, column)
+    board.check_capture(row, column)
     if is_finished or board.p1_captures == 5 or board.p2_captures == 5:
       break
 
