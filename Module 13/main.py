@@ -10,17 +10,14 @@
 # Assignment: go_moves lab
 # Date: 1 December 2023
 
-from colorama import Fore, Style
-from board import Board
+from colorama import Fore
+from board import Board, color_text
 
 def parse_cell(cell : str):
   letters = 'ABCDEFGHIJKLMNOPQRS'
   column = letters.index(cell[0].upper())
   row = int(cell[1:]) - 1
   return row, column
-
-def color_text(text : str, color) -> str:
-  return color + Style.BRIGHT + text + Fore.RESET + Style.NORMAL
 
 def main():
   # Initialize board and call initial input
@@ -30,11 +27,11 @@ def main():
   user_input = ''
 
   # Main game loop
-  while user_input != 'stop':
+  while user_input != 'STOP':
     player1_name = color_text('[Player 1]', Fore.RED)
     player2_name = color_text('[Player 2]', Fore.GREEN)
     user_input = input(f'{player1_name if board.player == 1 else player2_name} Enter tile: ').upper()
-    if user_input == 'stop':
+    if user_input == 'STOP':
       break
 
     # Parse user input and check for any errors
@@ -69,14 +66,14 @@ def main():
   if user_input == 'stop':  
     print('-' * 40)
     if board.player == 1:
-      print('Red forfeited! Green wins!')
+      print(f'{color_text("Red", Fore.RED)} forfeited! color_text("Green", Fore.Green) wins!')
     else:
-      print('Green forfeited! Red wins')
+      print(f'color_text("Green", Fore.Green) forfeited! {color_text("Red", Fore.RED)} wins')
   else:
     if board.player == 1:
-      print('Red won!')
+      print(f'{color_text("Red", Fore.RED)} got five in a row! {color_text("Red", Fore.RED)} wins!')
     else:
-      print('Green won!')
+      print(f'{color_text("Green", Fore.Green)} got five in a row! color_text("Green", Fore.Green) wins!')
 
 if __name__ == '__main__':
   main()
