@@ -20,6 +20,8 @@ def parse_cell(cell : str):
   return row, column
 
 def main():
+  divider_line = color_text('-' * 40, Fore.YELLOW)
+
   # Initialize board and call initial input
   board = Board()
   board.display()
@@ -63,17 +65,17 @@ def main():
     print(f'P1 {board.p1_captures} {board.p2_captures} P2 | {"P1" if board.player == 1 else "P2"} → {user_input}')
     board.next_player()
 
-  if user_input == 'stop':  
-    print('-' * 40)
+  if user_input == 'STOP':  
+    print(divider_line)
     if board.player == 1:
-      print(f'{color_text("Red", Fore.RED)} forfeited! color_text("Green", Fore.Green) wins!')
+      print(f'{color_text("Red", Fore.RED)} forfeited! {color_text("Green", Fore.GREEN)} wins!')
     else:
-      print(f'color_text("Green", Fore.Green) forfeited! {color_text("Red", Fore.RED)} wins')
+      print(f'{color_text("Green", Fore.GREEN)} forfeited! {color_text("Red", Fore.RED)} wins')
   else:
     if board.player == 1:
       print(f'{color_text("Red", Fore.RED)} got five in a row! {color_text("Red", Fore.RED)} wins!')
     else:
-      print(f'{color_text("Green", Fore.Green)} got five in a row! color_text("Green", Fore.Green) wins!')
+      print(f'{color_text("Green", Fore.GREEN)} got five in a row! {color_text("Green", Fore.GREEN)} wins!')
 
 if __name__ == '__main__':
   main()
