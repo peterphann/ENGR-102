@@ -51,12 +51,17 @@ class Board:
   def find_diagonal(self, row : int, column : int, pattern : str):
     cells = []
 
-    offset = min(8 - row, column)
+    offset = min(18 - row, column)
+    print(f'offset: {offset}')
     start_row, start_column = row + offset, column - offset
-    steps = min(start_row, 8 - start_column) + 1
+    print(f'start_row, start_column: {start_row}, {start_column}')
+    steps = min(start_row, 18 - start_column) + 1
+    print(f'steps: {steps}')
 
     diagonal = [self.board[start_row - i, start_column + i] for i in range(steps)]
+    print(f'diagonal: {diagonal}')
     diagonal_string = ''.join([str(i) for i in diagonal])
+    print(f'diagonal_string: {diagonal_string}')
 
     pattern_index = diagonal_string.find(pattern)
     while pattern_index != -1:
@@ -70,7 +75,7 @@ class Board:
     
     offset = min(row, column)
     start_row, start_column = row - offset, column - offset
-    steps = min(8 - start_row, 8 - start_column) + 1
+    steps = min(18 - start_row, 18 - start_column) + 1
 
     diagonal = [self.board[start_row + i, start_column + i] for i in range(steps)]
     diagonal_string = ''.join([str(i) for i in diagonal])
@@ -98,15 +103,22 @@ class Board:
   
   def check_capture(self, row : int, column : int) -> bool:
     opponent = 2 if self.board[row, column] == 1 else 1
+    print(f'opponent: {opponent}')
     pattern = str(self.player) + (str(opponent) * 2) + str(self.player)
+    print(f'pattern: {pattern}')
     matches = []
 
     matches.extend(self.find_row(row, column, pattern))
+    print(f'matches1: {matches}')
     matches.extend(self.find_column(row, column, pattern))
+    print(f'matches2: {matches}')
     matches.extend(self.find_diagonal(row, column, pattern))
+    print(f'matches3: {matches}')
     matches.extend(self.find_antidiagonal(row, column, pattern))
+    print(f'matches4: {matches}')
 
     captures_found = len(matches) // 4
+    print(f'captures_found: {captures_found}')
     has_captured = False
     for i in range(captures_found):
       if (row, column) not in matches[4 * i : 4 * i + 4]: continue
