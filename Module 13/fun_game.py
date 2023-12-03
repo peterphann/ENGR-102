@@ -41,7 +41,7 @@ def main():
   while user_input != 'stop':
     board.display()   
     print_scoreboard(board, last_valid_input, message)
-    user_input = input(f'{player1_name if board.player == 1 else player2_name}{Fore.BLACK + Style.BRIGHT} Enter tile: ')
+    user_input = input(f'{player1_name if board.player == 1 else player2_name}{SECONDARY_COLOR + Style.BRIGHT} Enter tile: ')
     
     if user_input == 'stop':
       player_display = color("Player 1", PLAYER1_COLOR) if board.player == 1 else color("Player 2", PLAYER2_COLOR)
