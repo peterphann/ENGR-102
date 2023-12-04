@@ -2,6 +2,7 @@ from colorama import Fore, Style
 import numpy as np
 
 def color(text : str, color) -> str:
+  '''Colors a provided string using colorama'''
   return color + Style.BRIGHT + text + Fore.RESET + Style.NORMAL
 
 MAIN_COLOR = Fore.MAGENTA
@@ -16,6 +17,7 @@ class Board:
     self.p1_captures, self.p2_captures = 0, 0
 
   def next_player(self) -> None:
+    '''Switches the current player of the board'''
     self.player = 2 if self.player == 1 else 1
 
   def place(self, row : int, column : int) -> None:
@@ -25,10 +27,12 @@ class Board:
     self.board[row][column] = 0
   
   def find_row(self, row : int, column : int, pattern : str):
+    # Extract the row of the board
     cells = []
     row_list = self.board[row]
     row_string = ''.join([str(i) for i in row_list])
 
+    # Use str.find to search for the provided pattern
     pattern_index = row_string.find(pattern)
     while pattern_index != -1:
       matched_cells = [(row, pattern_index + i) for i in range(len(pattern))]
