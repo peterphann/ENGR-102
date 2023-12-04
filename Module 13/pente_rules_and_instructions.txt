@@ -1,0 +1,11 @@
+INSTRUCTIONS:
+1. To place a stone, players must enter a letter (A-S) and number (1-19) corresponding to a square on the board.
+   For example, entering 'A1' would place a tile in the top left corner of the board.
+2. To quit the game, press 'Q'.
+
+RULES:
+1. Players take turns (Player 1 going first) placing stones of their color on empty intersections. 
+2. Stones are captured by custodial capture (flanking an adjacent pair of an opponent's stones directly on either side with your own stones). 
+   Captures consist of exactly two stones; flanking a single stone or three or more stones does not result in a capture.
+   A stone may legally be placed on any empty intersection, even if it forms a pair between two enemy stones.
+3. A player wins when they either align five or more stones of the some color in a row (in any vertical, horixontal or diagonal direction) or make 5 captures (10 stones).
